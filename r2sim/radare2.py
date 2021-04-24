@@ -4,14 +4,14 @@ from typing import Dict, List, Optional
 logger = logging.getLogger(__name__)
 
 
-def get_all_functions(r2) -> Optional[List]:
+def get_all_functions(r2, min_func_length: int = 64) -> Optional[List]:
     raw_functions_json = r2.cmdj("aflj")
 
     if not raw_functions_json:
         logger.warning("R2 didn't find any functions in file.")
         return None
 
-    return list(map(lambda x: x["name"], raw_functions_json))
+    return list(map(lambda x: x["name"], filter(lambda x: x["size"] > min_func_length, raw_functions_json)))
 
 
 def get_function_disassembly(r2, function_name: str) -> Optional[Dict[str, List]]:

@@ -3,6 +3,7 @@ import r2pipe
 import radare2
 import minhash
 import datasketch
+import itertools
 
 from typing import Dict, List, Any
 
@@ -21,19 +22,21 @@ def analyze_file(filename: str) -> Dict:
             "minhash": __minhash_from_disassembly(disassembly)
         }
 
-
     return data
 
 
 def compare_functions(this: Dict[str, Any], other: Dict[str, Any]):
-    for this_function in this.keys():
-        for other_function in other.keys():
-            this_minhash =  this[this_function]["minhash"]
-            other_minhash = other[other_function]["minhash"]
+    function_products = itertools.product(this.keys(), other.keys())
+    for function_pair in function_products:
+        this_function = function_pair[0]
+        other_function = function_pair[1]
 
-            jaccard_coefficient = this_minhash.jaccard(other_minhash)
-            if jaccard_coefficient > 0.7:
-                print(f"Functions {this_function} and {other_function} are similar with coefficient equal to {jaccard_coefficient}")
+        this_minhash =  this[this_function]["minhash"]
+        other_minhash = other[other_function]["minhash"]
+
+        jaccard_coefficient = this_minhash.jaccard(other_minhash)
+        if jaccard_coefficient > 0.7:
+            print(f"Functions {this_function} and {other_function} are similar with coefficient equal to {jaccard_coefficient}")
 
 
 def __minhash_from_disassembly(disassembly: List[Dict[str, str]]) -> datasketch.LeanMinHash:
