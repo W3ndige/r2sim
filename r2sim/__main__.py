@@ -1,8 +1,18 @@
-import sys
-
+import click
 import core
 
-data_1 = core.analyze_file(sys.argv[1])
-data_2 = core.analyze_file(sys.argv[2])
+@click.command()
+@click.argument("this_file", type=click.Path())
+@click.argument("other_file", type=click.Path())
+def show_interface(this_file: str, other_file: str):
+    print(f"[*] Analyzing similarity between {this_file} and {other_file}\n")
 
-core.compare_functions(data_1, data_2)
+    this_core = core.CoreFile(this_file)
+    other_core = core.CoreFile(other_file)
+    this_core.analyze_file()
+    other_core.analyze_file()
+
+    this_core.compare_functions(other_core)
+
+
+show_interface()
