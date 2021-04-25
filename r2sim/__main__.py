@@ -1,5 +1,7 @@
 import click
-import core
+
+from r2sim import core
+
 
 @click.command()
 @click.argument("this_file", type=click.Path())

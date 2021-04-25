@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +11,15 @@ def get_all_functions(r2, min_func_length: int = 64) -> Optional[List]:
         logger.warning("[!] R2 didn't find any functions in file.")
         return None
 
-    return list(map(lambda x: x["name"], filter(lambda x: x["size"] > min_func_length, raw_functions_json)))
+    return list(
+        map(
+            lambda x: x["name"],
+            filter(lambda x: x["size"] > min_func_length, raw_functions_json),
+        )
+    )
 
 
-def get_function_disassembly(r2, function_name: str) -> Optional[Dict[str, List]]:
+def get_function_disassembly(r2, function_name: str) -> Optional[List[Dict[str, Any]]]:
     if ";" in function_name:
         logger.error("[!] Found ';' in function name.")
         return None
@@ -29,12 +34,16 @@ def get_function_disassembly(r2, function_name: str) -> Optional[Dict[str, List]
     raw_opcodes = raw_disassembly_json["ops"]
     for raw_opcode in raw_opcodes:
         try:
-            disassembly.append({
-                "type": raw_opcode["type"],
-                "offset": raw_opcode["offset"],
-                "opcode": raw_opcode["opcode"]
-            })
+            disassembly.append(
+                {
+                    "type": raw_opcode["type"],
+                    "offset": raw_opcode["offset"],
+                    "opcode": raw_opcode["opcode"],
+                }
+            )
         except KeyError:
-            logger.warning(f"[!] Information for opcode at offset {raw_opcode['offset']} of {function_name} not found")
+            logger.warning(
+                f"[!] Information for opcode at offset {raw_opcode['offset']} of {function_name} not found"
+            )
 
     return disassembly
