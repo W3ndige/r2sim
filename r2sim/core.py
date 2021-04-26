@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import r2pipe   # type: ignore
-import datasketch   # type: ignore
+import r2pipe  # type: ignore
+import datasketch  # type: ignore
 import itertools
 import logging
 
@@ -62,7 +62,9 @@ class CoreFile:
 
             jaccard_coefficient = this_minhash.jaccard(other_minhash)
             if jaccard_coefficient > 0.7:
-                logger.info(f"Functions {this_function} and {other_function} are similar with score {jaccard_coefficient}")
+                logger.info(
+                    f"Functions {this_function} and {other_function} are similar with score {jaccard_coefficient}"
+                )
                 matching_functions.append(
                     MatchingFunctions(
                         this_function, other_function, jaccard_coefficient
