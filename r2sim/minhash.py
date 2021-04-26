@@ -1,9 +1,10 @@
 import logging
-import datasketch
+import datasketch  # type: ignore
 
 from typing import List, Any
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("r2sim")
+
 
 def n_shingle(data: List[Any], n: int = 4) -> List[Any]:
     output = []
@@ -27,11 +28,7 @@ def minhash_data(data: List[Any]) -> datasketch.LeanMinHash:
             logger.warning(e)
             continue
 
-
-    return datasketch.LeanMinHash(
-        seed=minhash.seed,
-        hashvalues=minhash.hashvalues
-    )
+    return datasketch.LeanMinHash(seed=minhash.seed, hashvalues=minhash.hashvalues)
 
 
 def compare_minhashes(m1: datasketch.LeanMinHash, m2: datasketch.LeanMinHash) -> float:
