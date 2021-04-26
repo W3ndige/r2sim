@@ -3,7 +3,7 @@ import datasketch # type: ignore
 
 from typing import List, Any
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("r2sim")
 
 
 def n_shingle(data: List[Any], n: int = 4) -> List[Any]:

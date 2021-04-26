@@ -3,7 +3,9 @@ from __future__ import annotations
 import r2pipe   # type: ignore
 import datasketch   # type: ignore
 import itertools
+import logging
 
+from pathlib import Path
 from typing import Dict, List
 from collections import namedtuple
 
@@ -13,16 +15,18 @@ MatchingFunctions = namedtuple(
     "MatchingFunctions", ["this_func", "other_func", "score"]
 )
 
+logger = logging.getLogger("r2sim")
+
 
 class CoreFile:
-    def __init__(self, filename: str):
-        self._filename = filename
-        self._r2 = r2pipe.open(filename)
+    def __init__(self, path: Path):
+        self._path = path
+        self._r2 = r2pipe.open(str(path))
         self._functions = None
 
     @property
     def filename(self):
-        return self._filename
+        return self._path.name
 
     @property
     def functions(self):
@@ -41,7 +45,7 @@ class CoreFile:
                 "minhash": self.__minhash_from_disassembly(disassembly),
             }
 
-        print(f"[*] File {self.filename} contains {len(functions)} functions\n")
+        logging.info(f"File {self.filename} contains {len(functions)} functions")
 
     def compare_functions(self, other: CoreFile) -> List[MatchingFunctions]:
         matching_functions = []
@@ -58,6 +62,7 @@ class CoreFile:
 
             jaccard_coefficient = this_minhash.jaccard(other_minhash)
             if jaccard_coefficient > 0.7:
+                logger.info(f"Functions {this_function} and {other_function} are similar with score {jaccard_coefficient}")
                 matching_functions.append(
                     MatchingFunctions(
                         this_function, other_function, jaccard_coefficient
