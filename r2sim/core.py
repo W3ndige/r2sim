@@ -75,7 +75,7 @@ class CoreFile:
     def __minhash_from_disassembly(
         disassembly: List[Dict[str, str]]
     ) -> datasketch.LeanMinHash:
-        opcodes_list = utils.get_opcodes_function_data(disassembly)
+        opcodes_list = utils.get_opcodes_types_function_data(disassembly)
 
         shingled_disassembly = minhash.n_shingle(opcodes_list)
 
