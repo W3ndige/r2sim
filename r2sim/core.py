@@ -4,12 +4,14 @@ import r2pipe  # type: ignore
 import datasketch  # type: ignore
 import itertools
 import logging
+import difflib
+import pprint
 
 from pathlib import Path
 from typing import Dict, List
 from collections import namedtuple
 
-from r2sim import utils, radare2, minhash
+from r2sim import radare2, minhash
 
 MatchingFunctions = namedtuple(
     "MatchingFunctions", ["this_func", "other_func", "score"]
@@ -19,7 +21,7 @@ logger = logging.getLogger("r2sim")
 
 
 class CoreFile:
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, **kwargs):
         self._path = path
         self._r2 = r2pipe.open(str(path))
         self._functions = None
@@ -47,12 +49,17 @@ class CoreFile:
 
         logging.info(f"File {self.filename} contains {len(functions)} functions")
 
-    def compare_functions(self, other: CoreFile) -> List[MatchingFunctions]:
+    def compare_functions(self, other: CoreFile, diff: bool = True) -> List[MatchingFunctions]:
         matching_functions = []
 
         function_products = itertools.product(
             self.functions.keys(), other.functions.keys()
         )
+
+        differ = None
+        if diff:
+            differ = difflib.Differ()
+
         for function_pair in function_products:
             this_function = function_pair[0]
             other_function = function_pair[1]
@@ -71,13 +78,27 @@ class CoreFile:
                     )
                 )
 
+                if differ and jaccard_coefficient != 1:
+                    first_opcodes = [x["opcode"] for x in self.functions[this_function]["disassembly"]]
+                    other_opcodes = [x["opcode"] for x in other.functions[other_function]["disassembly"]]
+
+                    differ_output = list(difflib.unified_diff(first_opcodes, other_opcodes, fromfile=this_function, tofile=other_function))
+
+                    logger.info(f"Printing diff between {this_function} and {other_function}")
+                    for differ_item in differ_output:
+                        print(f"\t{differ_item}")
+
+
+
+
+
         return matching_functions
 
     @staticmethod
     def __minhash_from_disassembly(
         disassembly: List[Dict[str, str]]
     ) -> datasketch.LeanMinHash:
-        opcodes_list = utils.get_opcodes_types_function_data(disassembly)
+        opcodes_list = [x["type"] for x in disassembly]
 
         shingled_disassembly = minhash.n_shingle(opcodes_list)
 
