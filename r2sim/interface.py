@@ -12,7 +12,8 @@ logger = logging.getLogger("r2sim")
 @click.command()
 @click.argument("filename_1", type=click.Path())
 @click.argument("filename_2", type=click.Path())
-def main_interface(filename_1: str, filename_2: str):
+@click.option("-d", "--diff", "diff", is_flag=True)
+def main_interface(filename_1: str, filename_2: str, diff: bool):
 
     logging.basicConfig(level=logging.INFO)
 
@@ -25,14 +26,4 @@ def main_interface(filename_1: str, filename_2: str):
     core_1.analyze_file()
     core_2.analyze_file()
 
-    analyze_functions(core_1, core_2)
-
-
-def analyze_functions(
-    core_1: core.CoreFile, core_2: core.CoreFile
-) -> Optional[List[core.MatchingFunctions]]:
-    if not core_1.functions or not core_2.functions:
-        return None
-
-    compared_functions = core_1.compare_functions(core_2)
-    return compared_functions
+    core_1.compare_functions(core_2, diff)

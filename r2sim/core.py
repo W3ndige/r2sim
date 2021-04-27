@@ -20,7 +20,7 @@ logger = logging.getLogger("r2sim")
 
 
 class CoreFile:
-    def __init__(self, path: Path, **kwargs):
+    def __init__(self, path: Path):
         self._path = path
         self._r2 = r2pipe.open(str(path))
         self._functions = None
@@ -49,7 +49,7 @@ class CoreFile:
         logging.info(f"File {self.filename} contains {len(functions)} functions")
 
     def compare_functions(
-        self, other: CoreFile, diff: bool = True
+        self, other: CoreFile, diff: bool = False
     ) -> List[MatchingFunctions]:
         matching_functions = []
 
