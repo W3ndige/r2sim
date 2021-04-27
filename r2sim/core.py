@@ -5,7 +5,6 @@ import datasketch  # type: ignore
 import itertools
 import logging
 import difflib
-import pprint
 
 from pathlib import Path
 from typing import Dict, List
@@ -49,7 +48,9 @@ class CoreFile:
 
         logging.info(f"File {self.filename} contains {len(functions)} functions")
 
-    def compare_functions(self, other: CoreFile, diff: bool = True) -> List[MatchingFunctions]:
+    def compare_functions(
+        self, other: CoreFile, diff: bool = True
+    ) -> List[MatchingFunctions]:
         matching_functions = []
 
         function_products = itertools.product(
@@ -79,18 +80,31 @@ class CoreFile:
                 )
 
                 if differ and jaccard_coefficient != 1:
-                    first_opcodes = [x["opcode"] for x in self.functions[this_function]["disassembly"]]
-                    other_opcodes = [x["opcode"] for x in other.functions[other_function]["disassembly"]]
+                    first_opcodes = [
+                        x["opcode"]
+                        for x in self.functions[this_function]["disassembly"]
+                    ]
+                    other_opcodes = [
+                        x["opcode"]
+                        for x in other.functions[other_function]["disassembly"]
+                    ]
 
-                    differ_output = list(difflib.unified_diff(first_opcodes, other_opcodes, fromfile=this_function, tofile=other_function))
+                    differ_output = list(
+                        difflib.unified_diff(
+                            first_opcodes,
+                            other_opcodes,
+                            fromfile=this_function,
+                            tofile=other_function,
+                        )
+                    )
 
-                    logger.info(f"Printing diff between {this_function} and {other_function}")
+                    logger.info(
+                        f"Printing diff between {this_function} and {other_function}"
+                    )
                     for differ_item in differ_output:
                         print(f"\t{differ_item}")
 
-
-
-
+        logger.info(f"Number of matching functions: {len(matching_functions)}")
 
         return matching_functions
 
