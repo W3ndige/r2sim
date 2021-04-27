@@ -11,7 +11,13 @@ logger = logging.getLogger("r2sim")
 @click.command()
 @click.argument("filename_1", type=click.Path())
 @click.argument("filename_2", type=click.Path())
-@click.option("-d", "--diff", "diff", is_flag=True, help="Switch for printing diffs between matching functions.")
+@click.option(
+    "-d",
+    "--diff",
+    "diff",
+    is_flag=True,
+    help="Switch for printing diffs between matching functions.",
+)
 def main_interface(filename_1: str, filename_2: str, diff: bool):
 
     logging.basicConfig(level=logging.INFO)
