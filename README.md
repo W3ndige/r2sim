@@ -25,7 +25,17 @@ pip install .
 
 ## Usage
 
-Example usage.
+Usage guide.
+
+```
+Usage: r2sim [OPTIONS] FILENAME_1 FILENAME_2
+
+Options:
+  -d, --diff  Switch for printing diffs between matching functions.
+  --help      Show this message and exit.
+```
+
+## Examples
 
 ```
 r2sim generic.wannacry.win_dll.0b352401619b8b6375dd37ba94a8b73526f428631ac12145858a94ce354b5ddc generic.wannacry.win_dll.0bf03d84ce97a6f5efa5fee889cc6de6ef892a0312fdbbdc1aafc7ed87ca574a
