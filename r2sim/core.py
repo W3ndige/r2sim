@@ -46,7 +46,7 @@ class CoreFile:
                 "minhash": self.__minhash_from_disassembly(disassembly),
             }
 
-        logging.info(f"File {self.filename} contains {len(functions)} functions")
+        logger.info(f"File {self.filename} contains {len(functions)} functions")
 
     def compare_functions(
         self, other: CoreFile, diff: bool = False
